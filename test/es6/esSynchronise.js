@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('esSynchronise', () => {
   utils.setup();
@@ -21,7 +21,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -115,7 +115,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -204,7 +204,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -302,7 +302,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -402,7 +402,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -497,7 +497,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -601,7 +601,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {
@@ -702,7 +702,7 @@ describe('esSynchronise', () => {
 
     const UserModel = mongoose.model('User', UserSchema);
 
-    return UserModel.remove({})
+    return UserModel.deleteMany({})
       .exec()
       .then(() => {
         for (let i = 0; i < 100; i++) {

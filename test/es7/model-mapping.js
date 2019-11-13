@@ -14,7 +14,98 @@ describe('model-mapping', () => {
 
     UserSchema.plugin(plugin, {
       mappingSettings: {
-        settings: {
+        analysis: {
+          filter: {
+            elision: {
+              type: 'elision',
+              articles: ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
+            },
+          },
+          analyzer: {
+            custom_french_analyzer: {
+              tokenizer: 'letter',
+              filter: [
+                'asciifolding',
+                'lowercase',
+                'french_stem',
+                'elision',
+                'stop',
+              ],
+            },
+            tag_analyzer: {
+              tokenizer: 'keyword',
+              filter: ['asciifolding', 'lowercase'],
+            },
+          },
+        },
+      },
+    });
+
+    const UserModel = mongoose.model('User', UserSchema);
+
+    return utils
+      .deleteModelIndexes(UserModel)
+      .then(() => {
+        return UserModel.esCreateMapping();
+      })
+      .then(() => {
+        const options = UserModel.esOptions();
+        return options.client.indices.getSettings({
+          index: options.index,
+        });
+      })
+      .then(resp => {
+        const analysis = resp.body.users.settings.index.analysis;
+        expect(analysis.analyzer).to.eql({
+          custom_french_analyzer: {
+            tokenizer: 'letter',
+            filter: [
+              'asciifolding',
+              'lowercase',
+              'french_stem',
+              'elision',
+              'stop',
+            ],
+          },
+          tag_analyzer: {
+            tokenizer: 'keyword',
+            filter: ['asciifolding', 'lowercase'],
+          },
+        });
+        expect(analysis.filter).to.eql({
+          elision: {
+            type: 'elision',
+            articles: ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
+          },
+        });
+      })
+      .then(() => {
+        const options = UserModel.esOptions();
+        return options.client.indices.getMapping({
+          index: options.index,
+          type: options.type,
+        });
+      })
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
+        expect(properties).to.have.all.keys('name');
+        expect(properties.name.type).to.be.equal('text');
+      });
+  });
+
+  it('should handle settings', () => {
+    const UserSchema = new mongoose.Schema({
+      name: String,
+    });
+
+    UserSchema.plugin(plugin);
+
+    const UserModel = mongoose.model('User', UserSchema);
+
+    return utils
+      .deleteModelIndexes(UserModel)
+      .then(() => {
+        return UserModel.esCreateMapping({
           analysis: {
             filter: {
               elision: {
@@ -39,16 +130,7 @@ describe('model-mapping', () => {
               },
             },
           },
-        },
-      },
-    });
-
-    const UserModel = mongoose.model('User', UserSchema);
-
-    return utils
-      .deleteModelIndexes(UserModel)
-      .then(() => {
-        return UserModel.esCreateMapping();
+        });
       })
       .then(() => {
         const options = UserModel.esOptions();
@@ -56,8 +138,8 @@ describe('model-mapping', () => {
           index: options.index,
         });
       })
-      .then(({ body }) => {
-        const analysis = body.users.settings.index.analysis;
+      .then(resp => {
+        const analysis = resp.body.users.settings.index.analysis;
         expect(analysis.analyzer).to.eql({
           custom_french_analyzer: {
             tokenizer: 'letter',
@@ -84,100 +166,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
-        expect(properties).to.have.all.keys('name');
-        expect(properties.name.type).to.be.equal('text');
-      });
-  });
-
-  it('should handle settings', () => {
-    const UserSchema = new mongoose.Schema({
-      name: String,
-    });
-
-    UserSchema.plugin(plugin);
-
-    const UserModel = mongoose.model('User', UserSchema);
-
-    return utils
-      .deleteModelIndexes(UserModel)
-      .then(() => {
-        return UserModel.esCreateMapping({
-          settings: {
-            analysis: {
-              filter: {
-                elision: {
-                  type: 'elision',
-                  articles: ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
-                },
-              },
-              analyzer: {
-                custom_french_analyzer: {
-                  tokenizer: 'letter',
-                  filter: [
-                    'asciifolding',
-                    'lowercase',
-                    'french_stem',
-                    'elision',
-                    'stop',
-                  ],
-                },
-                tag_analyzer: {
-                  tokenizer: 'keyword',
-                  filter: ['asciifolding', 'lowercase'],
-                },
-              },
-            },
-          },
-        });
-      })
-      .then(() => {
-        const options = UserModel.esOptions();
-        return options.client.indices.getSettings({
-          index: options.index,
-        });
-      })
-      .then(({ body }) => {
-        const analysis = body.users.settings.index.analysis;
-        expect(analysis.analyzer).to.eql({
-          custom_french_analyzer: {
-            tokenizer: 'letter',
-            filter: [
-              'asciifolding',
-              'lowercase',
-              'french_stem',
-              'elision',
-              'stop',
-            ],
-          },
-          tag_analyzer: {
-            tokenizer: 'keyword',
-            filter: ['asciifolding', 'lowercase'],
-          },
-        });
-        expect(analysis.filter).to.eql({
-          elision: {
-            type: 'elision',
-            articles: ['l', 'm', 't', 'qu', 'n', 's', 'j', 'd'],
-          },
-        });
-      })
-      .then(() => {
-        const options = UserModel.esOptions();
-        return options.client.indices.getMapping({
-          include_type_name: true,
-          index: options.index,
-          type: options.type,
-        });
-      })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('name');
         expect(properties.name.type).to.be.equal('text');
       });
@@ -221,13 +215,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys(
           'name',
           'age',
@@ -238,14 +231,14 @@ describe('model-mapping', () => {
           'embedded'
         );
         expect(properties.name.type).to.be.equal('text');
-        expect(properties.age.type).to.be.equal('long');
+        expect(properties.age.type).to.be.equal('double');
         expect(properties.joined.type).to.be.equal('date');
         expect(properties.tags.type).to.be.equal('text');
         expect(properties.optin.type).to.be.equal('boolean');
 
         expect(properties.plain.properties).to.have.all.keys('x', 'y', 'z');
         expect(properties.plain.properties.x.type).to.be.equal('text');
-        expect(properties.plain.properties.y.type).to.be.equal('long');
+        expect(properties.plain.properties.y.type).to.be.equal('double');
         expect(properties.plain.properties.z.type).to.be.equal('boolean');
 
         expect(properties.embedded.properties).to.have.all.keys('deep', 'key');
@@ -256,7 +249,7 @@ describe('model-mapping', () => {
         );
         expect(
           properties.embedded.properties.deep.properties.dn.type
-        ).to.be.equal('long');
+        ).to.be.equal('double');
       });
   });
 
@@ -307,13 +300,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys(
           'name',
           'tags',
@@ -331,7 +323,7 @@ describe('model-mapping', () => {
         ).to.have.all.keys('dn');
         expect(
           properties.embedded2.properties.deep1.properties.dn.type
-        ).to.be.equal('long');
+        ).to.be.equal('double');
       });
   });
 
@@ -360,13 +352,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys(
           'name',
           'age',
@@ -409,13 +400,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = GroupModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.groups.mappings.group.properties;
+      .then(resp => {
+        const properties = resp.body.groups.mappings.group.properties;
         expect(properties).to.have.all.keys('group', 'user');
         expect(properties.group.type).to.be.equal('text');
         expect(properties.user.type).to.be.equal('nested');
@@ -463,7 +453,7 @@ describe('model-mapping', () => {
             },
           },
         }).then(result => {
-          expect(result.hits.total.value).to.eql(0);
+          expect(result.hits.total).to.eql(0);
         });
       })
       .then(() => {
@@ -482,7 +472,7 @@ describe('model-mapping', () => {
             },
           },
         }).then(result => {
-          expect(result.hits.total.value).to.eql(1);
+          expect(result.hits.total).to.eql(1);
           expect(result.hits.hits[0]._source).to.eql({
             group: 'fans',
             user: [
@@ -568,13 +558,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('first', 'last', 'company');
         expect(properties.first.type).to.be.equal('text');
         expect(properties.last.type).to.be.equal('text');
@@ -645,7 +634,7 @@ describe('model-mapping', () => {
         });
       })
       .then(result => {
-        expect(result.hits.total.value).to.eql(1);
+        expect(result.hits.total).to.eql(1);
         expect(result.hits.hits[0]._source).to.eql({
           first: 'Maurice',
           last: 'Moss',
@@ -703,13 +692,12 @@ describe('model-mapping', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('first', 'last', 'books');
         expect(properties.first.type).to.be.equal('text');
         expect(properties.last.type).to.be.equal('text');
@@ -749,7 +737,7 @@ describe('model-mapping', () => {
         });
       })
       .then(result => {
-        expect(result.hits.total.value).to.eql(1);
+        expect(result.hits.total).to.eql(1);
         expect(result.hits.hits[0]._source).to.eql({
           first: 'Maurice',
           last: 'Moss',
@@ -873,7 +861,7 @@ describe('model-mapping', () => {
         });
       })
       .then(result => {
-        expect(result.hits.total.value).to.eql(1);
+        expect(result.hits.total).to.eql(1);
         expect(result.hits.hits[0]._source).to.eql({
           first: 'Maurice',
           last: 'Moss',

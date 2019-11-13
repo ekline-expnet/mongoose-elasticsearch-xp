@@ -47,13 +47,12 @@ describe('es_extend', () => {
       .then(() => {
         const options = UserModel.esOptions();
         return options.client.indices.getMapping({
-          include_type_name: true,
           index: options.index,
           type: options.type,
         });
       })
-      .then(({ body }) => {
-        const properties = body.users.mappings.user.properties;
+      .then(res => {
+        const properties = res.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('name', 'num', 'length');
         expect(properties.name.type).to.be.equal('text');
         expect(properties.num.type).to.be.equal('integer');
@@ -76,7 +75,7 @@ describe('es_extend', () => {
         });
       })
       .then(result => {
-        expect(result.hits.total.value).to.eql(1);
+        expect(result.hits.total).to.eql(1);
         expect(result.hits.hits[0]._source).to.eql({
           name: 'John',
           num: 123,

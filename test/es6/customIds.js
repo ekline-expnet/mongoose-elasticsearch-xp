@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const shortid = require('shortid');
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('custom ids', () => {
   utils.setup();

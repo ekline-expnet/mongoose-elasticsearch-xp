@@ -90,7 +90,7 @@ describe('esSynchronise', () => {
             return new utils.Promise((resolve, reject) => {
               UserPluginModel.esSearch({ match: { _id: user._id.toString() } })
                 .then(result => {
-                  expect(result.hits.total.value).to.eql(1);
+                  expect(result.hits.total).to.eql(1);
                   const hit = result.hits.hits[0];
                   expect(hit._source.name).to.be.equal(user.name);
                   expect(hit._source.age).to.be.equal(user.age);
@@ -176,7 +176,7 @@ describe('esSynchronise', () => {
       })
       .then(UserPluginModel => {
         return UserPluginModel.esSearch({ match_all: {} }).then(result => {
-          expect(result.hits.total.value).to.eql(10);
+          expect(result.hits.total).to.eql(10);
           const ids = result.hits.hits.map(hit => {
             return hit._id;
           });
@@ -273,7 +273,7 @@ describe('esSynchronise', () => {
             return new utils.Promise((resolve, reject) => {
               UserPluginModel.esSearch({ match: { _id: user._id.toString() } })
                 .then(result => {
-                  expect(result.hits.total.value).to.eql(1);
+                  expect(result.hits.total).to.eql(1);
                   const hit = result.hits.hits[0];
                   expect(hit._source.name).to.be.equal(user.name);
                   expect(hit._source.age).to.be.equal(undefined);
@@ -377,7 +377,7 @@ describe('esSynchronise', () => {
             return new utils.Promise((resolve, reject) => {
               UserPluginModel.esSearch({ match: { _id: user._id.toString() } })
                 .then(result => {
-                  expect(result.hits.total.value).to.eql(1);
+                  expect(result.hits.total).to.eql(1);
                   const hit = result.hits.hits[0];
                   expect(hit._source.name).to.be.equal(user.name);
                   expect(hit._source.age).to.be.equal(user.age);
@@ -469,7 +469,7 @@ describe('esSynchronise', () => {
       })
       .then(UserPluginModel => {
         return UserPluginModel.esSearch({ match_all: {} }).then(result => {
-          expect(result.hits.total.value).to.eql(10);
+          expect(result.hits.total).to.eql(10);
           const ids = result.hits.hits.map(hit => {
             return hit._id;
           });
@@ -572,7 +572,7 @@ describe('esSynchronise', () => {
             return new utils.Promise((resolve, reject) => {
               UserPluginModel.esSearch({ match: { _id: user._id.toString() } })
                 .then(result => {
-                  expect(result.hits.total.value).to.eql(1);
+                  expect(result.hits.total).to.eql(1);
                   const hit = result.hits.hits[0];
                   expect(hit._source.name).to.be.equal(undefined);
                   expect(hit._source.age).to.be.equal(user.age);
@@ -677,7 +677,7 @@ describe('esSynchronise', () => {
             return new utils.Promise((resolve, reject) => {
               UserPluginModel.esSearch({ match: { _id: user._id.toString() } })
                 .then(result => {
-                  expect(result.hits.total.value).to.eql(1);
+                  expect(result.hits.total).to.eql(1);
                   const hit = result.hits.hits[0];
                   expect(hit._source.name).to.be.equal(user.name);
                   expect(hit._source.age).to.be.equal(user.age);
@@ -774,9 +774,9 @@ describe('esSynchronise', () => {
               UserPluginModel.esSearch({ match: { _id: user._id.toString() } })
                 .then(result => {
                   if (user.age < 80) {
-                    expect(result.hits.total.value).to.eql(0);
+                    expect(result.hits.total).to.eql(0);
                   } else {
-                    expect(result.hits.total.value).to.eql(1);
+                    expect(result.hits.total).to.eql(1);
                     const hit = result.hits.hits[0];
                     expect(hit._source.name).to.be.equal(user.name);
                     expect(hit._source.age).to.be.equal(user.age);

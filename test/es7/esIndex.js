@@ -1,6 +1,12 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+
 const utils = require('../utils');
 const plugin = require('../../').v7;
 
@@ -17,23 +23,12 @@ describe('esIndex', () => {
         es_type: 'geo_point',
         es_boost: 1.5,
       },
-      doNotIndexMe: Boolean,
     });
 
-    UserSchema.plugin(plugin, {
-      transform: document => {
-        delete document.doNotIndexMe;
-        return document;
-      },
-    });
+    UserSchema.plugin(plugin);
     const UserModel = mongoose.model('User', UserSchema);
 
-    const john = new UserModel({
-      name: 'John',
-      age: 35,
-      pos: [5.7333, 43.5],
-      doNotIndexMe: true,
-    });
+    const john = new UserModel({ name: 'John', age: 35, pos: [5.7333, 43.5] });
 
     return utils
       .deleteModelIndexes(UserModel)
@@ -55,9 +50,9 @@ describe('esIndex', () => {
           body: { query: { match_all: {} } },
         });
       })
-      .then(({ body }) => {
-        expect(body.hits.total.value).to.eql(1);
-        const hit = body.hits.hits[0];
+      .then(resp => {
+        expect(resp.body.hits.total).to.eql(1);
+        const hit = resp.body.hits.hits[0];
         expect(hit._id).to.eql(john._id.toString());
         expect(hit._source).to.eql({
           name: 'John',
@@ -116,9 +111,9 @@ describe('esIndex', () => {
           body: { query: { match_all: {} } },
         });
       })
-      .then(({ body }) => {
-        expect(body.hits.total.value).to.eql(1);
-        const hit = body.hits.hits[0];
+      .then(resp => {
+        expect(resp.body.hits.total).to.eql(1);
+        const hit = resp.body.hits.hits[0];
         expect(hit._id).to.eql(john._id.toString());
         expect(hit._source).to.eql({
           name: 'John',

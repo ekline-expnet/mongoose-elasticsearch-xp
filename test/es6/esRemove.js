@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('esRemove', () => {
   utils.setup();
@@ -75,7 +75,7 @@ describe('esRemove', () => {
         });
       })
       .then(resp => {
-        const ids = resp.hits.hits.map(hit => {
+        const ids = resp.body.hits.hits.map(hit => {
           return hit._id;
         });
         ids.sort();

@@ -1,8 +1,10 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
+mongoose.set('useFindAndModify', false);
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('document-hook', () => {
   utils.setup();
@@ -89,9 +91,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({ name: 'John', age: 35 });
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({ name: 'John', age: 35 });
                 resolve();
               }
             );
@@ -123,8 +125,8 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(false);
-                expect(resp._id).to.eql(user._id.toString());
+                expect(resp.body.found).to.eql(false);
+                expect(resp.body._id).to.eql(user._id.toString());
                 resolve();
               }
             );
@@ -253,8 +255,8 @@ describe('document-hook', () => {
                 body: { query: { match_all: {} } },
               },
               (err, resp) => {
-                expect(resp.hits.total).to.eql(1);
-                const hit = resp.hits.hits[0];
+                expect(resp.body.hits.total).to.eql(1);
+                const hit = resp.body.hits.hits[0];
                 expect(hit._id).to.eql(henry._id.toString());
                 expect(hit._source).to.eql({ name: 'Henry', age: 85 });
                 resolve();
@@ -321,9 +323,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 35,
                   city: { name: 'Paris' },
@@ -363,9 +365,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 36,
                   city: { name: 'Paris' },
@@ -478,9 +480,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 35,
                   city: { name: 'Paris' },
@@ -524,9 +526,9 @@ describe('document-hook', () => {
                 id: witness._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(witness._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(witness._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 35,
                   city: { name: 'Paris' },
@@ -550,9 +552,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 36,
                   skill: { name: 'math' },
@@ -665,9 +667,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 35,
                   city: { name: 'Paris' },
@@ -711,9 +713,9 @@ describe('document-hook', () => {
                 id: witness._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(witness._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(witness._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 35,
                   city: { name: 'Paris' },
@@ -737,9 +739,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({
                   name: 'John',
                   age: 36,
                   skill: { name: 'math' },
@@ -825,9 +827,9 @@ describe('document-hook', () => {
                 id: user._id.toString(),
               },
               (err, resp) => {
-                expect(resp.found).to.eql(true);
-                expect(resp._id).to.eql(user._id.toString());
-                expect(resp._source).to.eql({ name: 'John', age: 67 });
+                expect(resp.body.found).to.eql(true);
+                expect(resp.body._id).to.eql(user._id.toString());
+                expect(resp.body._source).to.eql({ name: 'John', age: 67 });
                 resolve();
               }
             );
@@ -868,7 +870,7 @@ describe('document-hook', () => {
                 body: { query: { match_all: {} } },
               },
               (err, resp) => {
-                expect(resp.hits.total).to.eql(0);
+                expect(resp.body.hits.total).to.eql(0);
                 resolve();
               }
             );
@@ -901,8 +903,8 @@ describe('document-hook', () => {
                 body: { query: { match_all: {} } },
               },
               (err, resp) => {
-                expect(resp.hits.total).to.eql(1);
-                const hit = resp.hits.hits[0];
+                expect(resp.body.hits.total).to.eql(1);
+                const hit = resp.body.hits.hits[0];
                 expect(hit._id).to.eql(henry._id.toString());
                 expect(hit._source).to.eql({ name: 'Henry', age: 35 });
                 resolve();

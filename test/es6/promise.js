@@ -3,7 +3,7 @@
 const mongoose = require('mongoose');
 const utils = require('../utils');
 
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('promise', () => {
   utils.setup();

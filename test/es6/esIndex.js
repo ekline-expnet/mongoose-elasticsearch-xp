@@ -1,8 +1,14 @@
 'use strict';
 
 const mongoose = require('mongoose');
+
+mongoose.set('useNewUrlParser', true);
+mongoose.set('useFindAndModify', false);
+mongoose.set('useCreateIndex', true);
+mongoose.set('useUnifiedTopology', true);
+
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('esIndex', () => {
   utils.setup();
@@ -45,8 +51,8 @@ describe('esIndex', () => {
         });
       })
       .then(resp => {
-        expect(resp.hits.total).to.eql(1);
-        const hit = resp.hits.hits[0];
+        expect(resp.body.hits.total).to.eql(1);
+        const hit = resp.body.hits.hits[0];
         expect(hit._id).to.eql(john._id.toString());
         expect(hit._source).to.eql({
           name: 'John',
@@ -106,8 +112,8 @@ describe('esIndex', () => {
         });
       })
       .then(resp => {
-        expect(resp.hits.total).to.eql(1);
-        const hit = resp.hits.hits[0];
+        expect(resp.body.hits.total).to.eql(1);
+        const hit = resp.body.hits.hits[0];
         expect(hit._id).to.eql(john._id.toString());
         expect(hit._source).to.eql({
           name: 'John',

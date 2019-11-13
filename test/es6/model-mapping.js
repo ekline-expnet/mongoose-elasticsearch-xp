@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('model-mapping', () => {
   utils.setup();
@@ -54,8 +54,8 @@ describe('model-mapping', () => {
           index: options.index,
         });
       })
-      .then(settings => {
-        const analysis = settings.users.settings.index.analysis;
+      .then(resp => {
+        const analysis = resp.body.users.settings.index.analysis;
         expect(analysis.analyzer).to.eql({
           custom_french_analyzer: {
             tokenizer: 'letter',
@@ -86,8 +86,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('name');
         expect(properties.name.type).to.be.equal('text');
       });
@@ -138,8 +138,8 @@ describe('model-mapping', () => {
           index: options.index,
         });
       })
-      .then(settings => {
-        const analysis = settings.users.settings.index.analysis;
+      .then(resp => {
+        const analysis = resp.body.users.settings.index.analysis;
         expect(analysis.analyzer).to.eql({
           custom_french_analyzer: {
             tokenizer: 'letter',
@@ -170,8 +170,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('name');
         expect(properties.name.type).to.be.equal('text');
       });
@@ -219,8 +219,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys(
           'name',
           'age',
@@ -304,8 +304,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys(
           'name',
           'tags',
@@ -356,8 +356,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys(
           'name',
           'age',
@@ -404,8 +404,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.groups.mappings.group.properties;
+      .then(resp => {
+        const properties = resp.body.groups.mappings.group.properties;
         expect(properties).to.have.all.keys('group', 'user');
         expect(properties.group.type).to.be.equal('text');
         expect(properties.user.type).to.be.equal('nested');
@@ -562,8 +562,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('first', 'last', 'company');
         expect(properties.first.type).to.be.equal('text');
         expect(properties.last.type).to.be.equal('text');
@@ -696,8 +696,8 @@ describe('model-mapping', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(resp => {
+        const properties = resp.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('first', 'last', 'books');
         expect(properties.first.type).to.be.equal('text');
         expect(properties.last.type).to.be.equal('text');

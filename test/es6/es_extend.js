@@ -2,7 +2,7 @@
 
 const mongoose = require('mongoose');
 const utils = require('../utils');
-const plugin = require('../../').v5;
+const plugin = require('../../').v6;
 
 describe('es_extend', () => {
   utils.setup();
@@ -51,8 +51,8 @@ describe('es_extend', () => {
           type: options.type,
         });
       })
-      .then(mapping => {
-        const properties = mapping.users.mappings.user.properties;
+      .then(res => {
+        const properties = res.body.users.mappings.user.properties;
         expect(properties).to.have.all.keys('name', 'num', 'length');
         expect(properties.name.type).to.be.equal('text');
         expect(properties.num.type).to.be.equal('integer');
