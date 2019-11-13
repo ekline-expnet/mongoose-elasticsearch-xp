@@ -1,5 +1,10 @@
 # mongoose-elasticsearch-xp
 
+Fork to add support for latest elasticsearch api using: 
+
+- "es6": "npm:@elastic/elasticsearch@^6.8.3",
+- "es7": "npm:@elastic/elasticsearch@^7.4.0",
+
 [![NPM version][npm-image]][npm-url] [![Build Status][travis-image]][travis-url] [![Coverage Status][coverage-image]][coverage-url]
 
 mongoose-elasticsearch-xp is a [mongoose](http://mongoosejs.com/) plugin that can automatically index your models into [elasticsearch](http://www.elasticsearch.org/).
@@ -34,8 +39,8 @@ This plugin is compatible with Elasticsearch version 2,5,6 and 7.
 
 mongoose-elasticsearch-xp requires:
 
-  - mongoose 4.9.0, 5.0.0 or later
-  - @elastic/elasticsearch 7.0 or later
+  - mongoose 5.0.0 or later
+  - @elastic/elasticsearch 6.0 or later
 
 ## Why this plugin?
 
